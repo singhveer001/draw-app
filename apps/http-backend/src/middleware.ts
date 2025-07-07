@@ -6,13 +6,13 @@ export function middleware(req: Request, res: Response, next: NextFunction) {
     const header = req.headers["authorization"];
 
     if (!header || !header.startsWith("Bearer ")) {
-        return res.status(401).json({ 
+        res.status(401).json({ 
             message: "Missing or invalid token" 
         });
+        return ;
     }
 
     const token = header.split(" ")[1] ;
-
     try {
         //@ts-ignore
         const decoded = jwt.verify(token,SECRET_TOKEN) ;
@@ -20,8 +20,9 @@ export function middleware(req: Request, res: Response, next: NextFunction) {
         req.userId = decoded.userId;
         next(); 
     } catch (err) {
-        return res.status(403).json({ 
+        res.status(403).json({ 
             message: "Unauthorized access" 
         });
+        return ;
     }
 }
